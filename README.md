@@ -4,7 +4,7 @@
 
 ShopWise Churn Predictor uses cutting-edge machine learning to analyze customer behavior and identify potential churners. Our model helps you retain valuable customers and grow your business.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)]([https://blank-app-template.streamlit.app/](https://e-commerce-customer-churn-samuelsemaya.streamlit.app/))
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://e-commerce-customer-churn-samuelsemaya.streamlit.app/)
 
 ### How to run it on your own machine
 
