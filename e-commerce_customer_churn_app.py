@@ -7,10 +7,10 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 
-# Page config - This must be the first Streamlit command
+# page config - This must be the first Streamlit command
 st.set_page_config(page_title="ShopWise Churn Predictor", layout="wide", initial_sidebar_state="expanded")
 
-# Set dark theme
+# set dark theme
 st.markdown("""
 <style>
     .reportview-container {
@@ -42,18 +42,18 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Model and System
+# model and System
 MAIN_PATH = os.path.abspath(os.getcwd())
 PATH_MODEL = os.path.join(MAIN_PATH, "final_model.sav")
 lgbm = pickle.load(open(PATH_MODEL, 'rb'))
 
-# Sidebar
+# sidebar
 with st.sidebar:
     st.image("logo_shopwise.png", width=200)
     st.title("Navigation")
     page = st.radio("", ["🏠 Home", "🔮 Predict", "ℹ️ About"])
 
-# Home page
+# home page
 if page == "🏠 Home":
     st.title("Welcome to ShopWise Churn Predictor")
     st.write("""
@@ -75,7 +75,7 @@ if page == "🏠 Home":
     
     st.info("Navigate to the '🔮 Predict' page to start analyzing customer data!")
 
-# Predict page
+# predict page
 elif page == "🔮 Predict":
     st.title("Customer Churn Prediction")
     
@@ -154,7 +154,7 @@ elif page == "🔮 Predict":
             else:
                 st.success("✅ Low risk of churn. Keep up the good work!")
 
-# About page
+# about page
 elif page == "ℹ️ About":
     st.title("About ShopWise Churn Predictor")
     st.write("""
@@ -182,7 +182,7 @@ elif page == "ℹ️ About":
     - 🌐 Website: https://www.linkedin.com/in/samuelsemaya/
     """)
 
-# Footer
+# footer
 st.markdown("---")
 st.markdown("© 2024 ShopWise Churn Predictor. All rights reserved.")
 
