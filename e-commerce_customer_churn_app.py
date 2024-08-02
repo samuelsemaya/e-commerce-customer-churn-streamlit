@@ -1,4 +1,3 @@
-# library
 import os
 import streamlit as st
 import pandas as pd
@@ -7,53 +6,73 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import plotly.express as px
 
-# page config - This must be the first Streamlit command
+# Page config - This must be the first Streamlit command
 st.set_page_config(page_title="ShopWise Churn Predictor", layout="wide", initial_sidebar_state="expanded")
 
-# set dark theme
-st.markdown("""
-<style>
-    .reportview-container {
-        background-color: #0E1117;
-        color: #FAFAFA;
-    }
-    .sidebar .sidebar-content {
-        background-color: #262730;
-    }
-    .Widget>label {
-        color: #FAFAFA;
-    }
-    .stTextInput>div>div>input {
-        background-color: #262730;
-        color: #FAFAFA;
-    }
-    .stSelectbox>div>div>select {
-        background-color: #262730;
-        color: #FAFAFA;
-    }
-    .stSlider>div>div>div>div {
-        background-color: #4CAF50;
-    }
-    .stButton>button {
-        color: #0E1117;
-        background-color: #4CAF50;
-        border-radius: 5px;
-    }
-</style>
-""", unsafe_allow_html=True)
+# Function to set color scheme based on mode
+def set_color_scheme(is_dark_mode):
+    if is_dark_mode:
+        return {
+            'text_color': '#FAFAFA',
+            'input_bg': '#262730',
+            'button_bg': '#4CAF50',
+            'button_text': '#0E1117',
+            'gauge_steps': ['#1E5631', '#FFA500', '#8B0000'],
+            'pie_colors': ['#1E5631', '#8B0000']
+        }
+    else:
+        return {
+            'text_color': '#000000',
+            'input_bg': '#F0F2F6',
+            'button_bg': '#4CAF50',
+            'button_text': '#FFFFFF',
+            'gauge_steps': ['#90EE90', '#FFA500', '#FF6347'],
+            'pie_colors': ['#90EE90', '#FF6347']
+        }
 
-# model and System
-MAIN_PATH = os.path.abspath(os.getcwd())
-PATH_MODEL = os.path.join(MAIN_PATH, "final_model.sav")
-lgbm = pickle.load(open(PATH_MODEL, 'rb'))
-
-# sidebar
+# Sidebar
 with st.sidebar:
     st.image("logo_shopwise.png", width=200)
     st.title("Navigation")
     page = st.radio("", ["🏠 Home", "🔮 Predict", "ℹ️ About"])
+    
+    # Mode toggle
+    is_dark_mode = st.toggle("Dark Mode", value=False)
 
-# home page
+# Set color scheme
+colors = set_color_scheme(is_dark_mode)
+
+# Apply selected theme
+st.markdown(f"""
+<style>
+    .Widget>label {{
+        color: {colors['text_color']};
+    }}
+    .stTextInput>div>div>input {{
+        background-color: {colors['input_bg']};
+        color: {colors['text_color']};
+    }}
+    .stSelectbox>div>div>select {{
+        background-color: {colors['input_bg']};
+        color: {colors['text_color']};
+    }}
+    .stSlider>div>div>div>div {{
+        background-color: {colors['button_bg']};
+    }}
+    .stButton>button {{
+        color: {colors['button_text']};
+        background-color: {colors['button_bg']};
+        border-radius: 5px;
+    }}
+</style>
+""", unsafe_allow_html=True)
+
+# Model and System
+MAIN_PATH = os.path.abspath(os.getcwd())
+PATH_MODEL = os.path.join(MAIN_PATH, "final_model.sav")
+lgbm = pickle.load(open(PATH_MODEL, 'rb'))
+
+# Home page
 if page == "🏠 Home":
     st.title("Welcome to ShopWise Churn Predictor")
     st.write("""
@@ -75,7 +94,7 @@ if page == "🏠 Home":
     
     st.info("Navigate to the '🔮 Predict' page to start analyzing customer data!")
 
-# predict page
+# Predict page
 elif page == "🔮 Predict":
     st.title("Customer Churn Prediction")
     
@@ -122,16 +141,16 @@ elif page == "🔮 Predict":
             fig.add_trace(go.Indicator(
                 mode = "gauge+number",
                 value = churn_prob,
-                title = {'text': "Churn Probability", 'font': {'color': '#FAFAFA'}},
+                title = {'text': "Churn Probability", 'font': {'color': colors['text_color']}},
                 gauge = {
-                    'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': "#FAFAFA"},
-                    'bar': {'color': "#4CAF50"},
+                    'axis': {'range': [None, 1], 'tickwidth': 1, 'tickcolor': colors['text_color']},
+                    'bar': {'color': colors['button_bg']},
                     'steps' : [
-                        {'range': [0, 0.5], 'color': "#1E5631"},
-                        {'range': [0.5, 0.7], 'color': "#FFA500"},
-                        {'range': [0.7, 1], 'color': "#8B0000"}],
+                        {'range': [0, 0.5], 'color': colors['gauge_steps'][0]},
+                        {'range': [0.5, 0.7], 'color': colors['gauge_steps'][1]},
+                        {'range': [0.7, 1], 'color': colors['gauge_steps'][2]}],
                     'threshold' : {'line': {'color': "red", 'width': 4}, 'thickness': 0.75, 'value': 0.7}},
-                number = {'font': {'color': '#FAFAFA'}}
+                number = {'font': {'color': colors['text_color']}}
             ), row=1, col=1)
 
             # Donut chart
@@ -139,9 +158,9 @@ elif page == "🔮 Predict":
                 labels=['Retention', 'Churn'],
                 values=[1-churn_prob, churn_prob],
                 hole=.3,
-                marker_colors=['#1E5631', '#8B0000'],
+                marker_colors=colors['pie_colors'],
                 textinfo='label+percent',
-                textfont={'color': '#FAFAFA'}
+                textfont={'color': colors['text_color']}
             ), row=1, col=2)
 
             fig.update_layout(height=500, width=1000, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
@@ -154,7 +173,7 @@ elif page == "🔮 Predict":
             else:
                 st.success("✅ Low risk of churn. Keep up the good work!")
 
-# about page
+# About page
 elif page == "ℹ️ About":
     st.title("About ShopWise Churn Predictor")
     st.write("""
@@ -182,7 +201,7 @@ elif page == "ℹ️ About":
     - 🌐 Website: https://www.linkedin.com/in/samuelsemaya/
     """)
 
-# footer
+# Footer
 st.markdown("---")
 st.markdown("© 2024 ShopWise Churn Predictor. All rights reserved.")
 
